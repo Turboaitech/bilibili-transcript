@@ -20,15 +20,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         
         .container {
             background: white;
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
         }
         
         h1 {
@@ -39,6 +40,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-size: 2.2rem;
+            font-weight: 700;
         }
         
         .form-group {
@@ -47,42 +50,46 @@
         
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.8rem;
             font-weight: 600;
             color: #555;
+            font-size: 1.1rem;
         }
         
         input[type="url"] {
             width: 100%;
-            padding: 12px 15px;
+            padding: 15px 20px;
             border: 2px solid #e1e5e9;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             transition: all 0.3s ease;
+            background: #f8f9fa;
         }
         
         input[type="url"]:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
         }
         
         button {
             width: 100%;
-            padding: 12px 20px;
+            padding: 15px 25px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-top: 1rem;
         }
         
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         
         button:disabled {
@@ -94,9 +101,15 @@
         
         .result {
             margin-top: 2rem;
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 1.5rem;
+            border-radius: 10px;
             display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .result.success {
@@ -112,25 +125,28 @@
         }
         
         .task-id {
-            font-family: monospace;
+            font-family: 'Monaco', 'Consolas', monospace;
             background: rgba(0,0,0,0.1);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            margin: 0.5rem 0;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            word-break: break-all;
+            font-size: 14px;
         }
         
         .loading {
             display: none;
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.3s ease;
         }
         
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #667eea;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
@@ -144,16 +160,65 @@
             font-size: 14px;
             color: #666;
             margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        .feature-list {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-list h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .feature-list ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .feature-list li {
+            padding: 0.5rem 0;
+            color: #555;
+        }
+        
+        .feature-list li:before {
+            content: "✨ ";
+            margin-right: 0.5rem;
+        }
+        
+        .status-info {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            color: #1565c0;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Bilibili 视频转文字</h1>
+        <h1>🎬 Bilibili 视频转文字</h1>
+        
+        <div class="feature-list">
+            <h3>功能特性</h3>
+            <ul>
+                <li>支持 Bilibili 视频链接转换</li>
+                <li>基于云端队列处理系统</li>
+                <li>实时任务状态追踪</li>
+                <li>支持多种视频格式</li>
+            </ul>
+        </div>
         
         <form id="submitForm">
             <div class="form-group">
-                <label for="videoUrl">视频链接</label>
+                <label for="videoUrl">📺 Bilibili 视频链接</label>
                 <input 
                     type="url" 
                     id="videoUrl" 
@@ -162,11 +227,11 @@
                     required
                 >
                 <div class="example">
-                    示例: https://www.bilibili.com/video/BV1xx411c7mD
+                    💡 示例: https://www.bilibili.com/video/BV1xx411c7mD
                 </div>
             </div>
             
-            <button type="submit" id="submitBtn">提交任务</button>
+            <button type="submit" id="submitBtn">🚀 提交转换任务</button>
         </form>
         
         <div class="loading" id="loading">
@@ -175,6 +240,14 @@
         </div>
         
         <div class="result" id="result"></div>
+        
+        <div class="status-info">
+            <strong>📋 使用说明:</strong><br>
+            1. 粘贴 Bilibili 视频链接<br>
+            2. 点击提交任务按钮<br>
+            3. 保存返回的任务ID以便查询进度<br>
+            4. 处理完成后可通过任务ID获取结果
+        </div>
     </div>
 
     <script>
@@ -189,13 +262,13 @@
             const videoUrl = document.getElementById('videoUrl').value.trim();
             
             if (!videoUrl) {
-                showResult('请输入视频链接', 'error');
+                showResult('❌ 请输入视频链接', 'error');
                 return;
             }
             
             // Validate Bilibili URL
             if (!videoUrl.includes('bilibili.com') || !videoUrl.includes('video/')) {
-                showResult('请输入有效的 Bilibili 视频链接', 'error');
+                showResult('❌ 请输入有效的 Bilibili 视频链接', 'error');
                 return;
             }
             
@@ -214,16 +287,22 @@
                 
                 if (response.ok && data.success) {
                     showResult(
-                        `任务提交成功！<br>任务ID: <div class="task-id">${data.taskId}</div>请保存此任务ID以便查询进度。`, 
+                        `✅ 任务提交成功！<br><br>
+                        📋 <strong>任务ID:</strong><br>
+                        <div class="task-id">${data.taskId}</div>
+                        <strong>⚠️ 重要提醒:</strong><br>
+                        • 请保存此任务ID以便查询进度<br>
+                        • 任务将在后台队列中处理<br>
+                        • 处理时间根据视频长度而定`, 
                         'success'
                     );
                     form.reset();
                 } else {
-                    showResult(data.error || '提交失败，请重试', 'error');
+                    showResult(`❌ ${data.error || '提交失败，请重试'}`, 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                showResult('网络错误，请检查连接后重试', 'error');
+                showResult('❌ 网络错误，请检查连接后重试', 'error');
             } finally {
                 setLoading(false);
             }
@@ -232,10 +311,12 @@
         function setLoading(isLoading) {
             if (isLoading) {
                 submitBtn.disabled = true;
+                submitBtn.textContent = '⏳ 提交中...';
                 loading.style.display = 'block';
                 result.style.display = 'none';
             } else {
                 submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 提交转换任务';
                 loading.style.display = 'none';
             }
         }
@@ -245,6 +326,18 @@
             result.className = `result ${type}`;
             result.style.display = 'block';
         }
+        
+        // Add some interactive effects
+        document.querySelector('input[type="url"]').addEventListener('paste', function() {
+            setTimeout(() => {
+                const url = this.value;
+                if (url && (url.includes('bilibili.com') && url.includes('video/'))) {
+                    this.style.borderColor = '#28a745';
+                } else if (url) {
+                    this.style.borderColor = '#dc3545';
+                }
+            }, 100);
+        });
     </script>
 </body>
 </html>
