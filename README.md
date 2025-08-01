@@ -2,7 +2,37 @@
 
 一个基于 Vercel 部署的 Bilibili 视频转文字服务，使用 Upstash Redis 作为任务队列。
 
-## 项目结构
+## 🚀 快速部署
+
+### 1. 部署到 Vercel
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/bilibili-transcript)
+
+**手动部署步骤：**
+1. Fork 这个仓库到你的 GitHub 账号
+2. 访问 [Vercel Dashboard](https://vercel.com/dashboard)
+3. 点击 "New Project"
+4. 导入你的 GitHub 仓库
+5. 配置环境变量（见下方）
+6. 点击 "Deploy"
+
+### 2. 配置环境变量
+
+在 Vercel 项目设置中添加以下环境变量：
+
+```
+UPSTASH_REDIS_REST_URL=https://quiet-wahoo-6886.upstash.io
+UPSTASH_REDIS_REST_TOKEN=ARrmAAIjcDE5Mzc2ZDQxZDRhODE0MzQxYTg4ODQ2YjhlZTIxZDIyZXAxMA
+```
+
+**设置步骤：**
+1. 进入 Vercel 项目 Dashboard
+2. 点击 Settings 选项卡
+3. 点击 Environment Variables
+4. 添加上述两个环境变量
+5. 重新部署项目
+
+## 📁 项目结构
 
 ```
 bilibili-transcript/
@@ -14,89 +44,51 @@ bilibili-transcript/
 ├── worker.py               # Python 轮询脚本
 ├── package.json            # 项目依赖
 ├── vercel.json            # Vercel 配置
+├── .env.example           # 环境变量示例
 └── README.md              # 说明文档
 ```
 
-## 功能特性
+## ✨ 功能特性
 
 - 🎥 支持 Bilibili 视频链接提交
-- 📝 视频转文字处理
+- 📝 视频转文字处理（演示版本）
 - 🔄 基于 Redis 的任务队列系统
 - 🌐 Vercel 无服务器部署
 - 🐍 Python 本地轮询处理器
 - 📱 响应式前端界面
+- 📊 任务处理统计
+- 📝 完整的日志记录
 
-## 部署步骤
+## 🔧 本地开发
 
-### 1. 准备 Upstash Redis
-
-1. 注册 [Upstash](https://upstash.com/) 账号
-2. 创建 Redis 数据库
-3. 获取 Redis URL 和 Token
-
-### 2. 部署到 Vercel
-
-#### 方法一：通过 Vercel CLI
-
+### 安装依赖
 ```bash
-# 安装 Vercel CLI
-npm install -g vercel
-
-# 登录 Vercel
-vercel login
-
-# 部署项目
-vercel --prod
+npm install
 ```
 
-#### 方法二：通过 GitHub 连接
-
-1. 将代码推送到 GitHub 仓库
-2. 在 [Vercel Dashboard](https://vercel.com/dashboard) 导入项目
-3. 连接 GitHub 仓库并部署
-
-### 3. 配置环境变量
-
-在 Vercel 项目设置中添加以下环境变量：
-
-```
-UPSTASH_REDIS_REST_URL=https://quiet-wahoo-6886.upstash.io
-UPSTASH_REDIS_REST_TOKEN=你的token
-```
-
-**设置步骤：**
-1. 进入 Vercel 项目 Dashboard
-2. 点击 Settings 选项卡
-3. 点击 Environment Variables
-4. 添加上述两个环境变量
-5. 重新部署项目
-
-### 4. 本地运行 Python 工作器
-
+### 设置环境变量
 ```bash
-# 安装依赖
+cp .env.example .env.local
+# 编辑 .env.local 文件，填入你的 Upstash Redis 信息
+```
+
+### 启动开发服务器
+```bash
+npm run dev
+```
+
+### 运行 Python 工作器
+```bash
+# 安装 Python 依赖
 pip install requests
 
-# 运行工作器
+# 运行工作器（替换为你的实际域名）
 python worker.py https://your-app.vercel.app
-
-# 或设置环境变量
-export API_BASE_URL=https://your-app.vercel.app
-python worker.py
 ```
 
-## 使用方法
+## 📚 API 接口
 
-### 前端提交任务
-
-1. 访问部署的网站
-2. 输入 Bilibili 视频链接
-3. 点击提交任务
-4. 记录返回的任务ID
-
-### API 接口
-
-#### 提交任务
+### 提交任务
 ```http
 POST /api/submit-task
 Content-Type: application/json
@@ -106,74 +98,153 @@ Content-Type: application/json
 }
 ```
 
-#### 获取待处理任务
+**响应：**
+```json
+{
+  "success": true,
+  "taskId": "task_1234567890_abc123",
+  "message": "Task submitted successfully"
+}
+```
+
+### 获取待处理任务
 ```http
 GET /api/get-pending-task
 ```
 
-#### 更新任务结果
+**响应：**
+```json
+{
+  "task": {
+    "taskId": "task_1234567890_abc123",
+    "videoUrl": "https://www.bilibili.com/video/BV1xx411c7mD",
+    "videoId": "BV1xx411c7mD",
+    "status": "processing",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### 更新任务结果
 ```http
 POST /api/get-pending-task
 Content-Type: application/json
 
 {
-  "taskId": "task_xxx",
-  "result": "转录文本内容",
-  "error": "错误信息(可选)"
+  "taskId": "task_1234567890_abc123",
+  "result": "转录文本内容...",
+  "error": null
 }
 ```
 
-## 开发说明
+## 🐍 Python 工作器说明
 
-### 本地开发
+`worker.py` 是一个强大的轮询脚本，具有以下特性：
 
+### 功能特点
+- ✅ 自动轮询任务队列
+- ✅ 完整的错误处理和重试机制
+- ✅ 详细的日志记录
+- ✅ 处理统计信息
+- ✅ 优雅的退出机制
+- ✅ 连接失败保护
+
+### 使用方法
 ```bash
-# 安装依赖
-npm install
+# 方法 1: 命令行参数
+python worker.py https://your-app.vercel.app
 
-# 启动开发服务器
-npm run dev
+# 方法 2: 环境变量
+export API_BASE_URL=https://your-app.vercel.app
+python worker.py
+
+# 自定义轮询间隔（秒）
+export POLL_INTERVAL=10
+python worker.py https://your-app.vercel.app
 ```
 
-### Python 工作器说明
+### 集成真实转录服务
 
-`worker.py` 是一个轮询脚本，用于：
-- 定期检查 Redis 中的待处理任务
-- 下载和处理 Bilibili 视频
-- 将转录结果更新回 Redis
+当前版本包含演示代码。要集成真实的视频转录功能，可以参考以下方案：
 
-**注意**: 当前版本的工作器包含模拟处理逻辑，实际使用时需要集成真实的视频下载和转录服务。
+#### 方案一：使用 OpenAI Whisper
+```bash
+pip install yt-dlp whisper ffmpeg-python
+```
 
-### 扩展功能
+#### 方案二：使用讯飞语音 API
+```bash
+pip install websocket-client
+```
 
-可以集成以下服务来实现真实的视频转录：
-- [Whisper](https://github.com/openai/whisper) - OpenAI 的语音识别模型
-- [讯飞语音](https://www.xfyun.cn/) - 中文语音识别服务
-- [YouTube-dl](https://github.com/ytdl-org/youtube-dl) - 视频下载工具
+详细集成代码请参考 `worker.py` 中的注释部分。
 
-## 注意事项
+## 🔒 安全注意事项
 
-1. **环境变量安全**: 不要在代码中硬编码 Redis 凭据
+1. **环境变量安全**: 不要在代码中硬编码敏感信息
 2. **任务过期**: Redis 任务设置了 24 小时的过期时间
-3. **错误处理**: 工作器包含完整的错误处理和重试机制
-4. **资源限制**: 注意 Vercel 和 Upstash 的使用限制
+3. **错误处理**: 所有 API 都包含完整的错误处理
+4. **CORS 配置**: API 已正确配置跨域访问
 
-## 故障排除
+## 📊 监控和日志
+
+- Python 工作器会生成 `worker.log` 日志文件
+- 包含详细的处理统计信息
+- 支持实时状态监控
+- 错误信息会同时输出到控制台和日志文件
+
+## 🚨 故障排除
 
 ### 常见问题
 
 1. **API 调用失败**
    - 检查环境变量是否正确设置
    - 验证 Upstash Redis 连接
+   - 查看 Vercel 函数日志
 
 2. **任务处理失败**
-   - 查看工作器日志输出
+   - 查看 `worker.log` 日志文件
    - 确认视频链接格式正确
+   - 检查网络连接
 
 3. **部署问题**
-   - 检查 vercel.json 配置
-   - 确认所有文件都已提交到 git
+   - 确认 `vercel.json` 配置正确
+   - 检查所有必要文件是否提交
+   - 验证环境变量设置
 
-## 许可证
+### 调试技巧
+
+```bash
+# 查看详细日志
+tail -f worker.log
+
+# 测试 API 连接
+curl https://your-app.vercel.app/api/get-pending-task
+
+# 手动提交测试任务
+curl -X POST https://your-app.vercel.app/api/submit-task \
+  -H "Content-Type: application/json" \
+  -d '{"videoUrl":"https://www.bilibili.com/video/BV1xx411c7mD"}'
+```
+
+## 📈 扩展功能建议
+
+- [ ] 添加用户认证系统
+- [ ] 实现任务状态查询 API
+- [ ] 支持批量视频处理
+- [ ] 添加转录结果导出功能
+- [ ] 集成更多视频平台支持
+- [ ] 实现 WebSocket 实时通知
+- [ ] 添加管理后台界面
+
+## 🤝 贡献指南
+
+欢迎提交 Issue 和 Pull Request！
+
+## 📄 许可证
 
 MIT License
+
+---
+
+**⚡ 快速开始**: 点击上方的 "Deploy with Vercel" 按钮，几分钟内即可拥有自己的视频转文字服务！
